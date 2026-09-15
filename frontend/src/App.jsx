@@ -1,0 +1,77 @@
+import { useState, useEffect } from 'react'
+import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
+import ConsultaPreco from './pages/ConsultaPreco'
+import CadastroProduto from './pages/CadastroProduto'
+
+export default function App() {
+  const [usuarioLogado, setUsuarioLogado] = useState(false)
+  const [telaAtual, setTelaAtual] = useState('consulta')
+
+  useEffect(() => {
+    const usuario = localStorage.getItem('usuario')
+    if (usuario) {
+      setUsuarioLogado(true)
+    }
+  }, [])
+
+  const handleLogin = (usuario) => {
+    localStorage.setItem('usuario', usuario)
+    setUsuarioLogado(true)
+    setTelaAtual('consulta')
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('usuario')
+    setUsuarioLogado(false)
+    setTelaAtual('consulta')
+  }
+
+  if (!usuarioLogado) {
+    return <Login onLogin={handleLogin} />
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Navbar */}
+      <nav className="bg-blue-600 text-white shadow-md">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+          <h1 className="text-2xl font-bold">📦 Depósito Piauí</h1>
+          <div className="flex gap-4 items-center">
+            <button
+              onClick={() => setTelaAtual('consulta')}
+              className={`px-4 py-2 rounded ${telaAtual === 'consulta' ? 'bg-blue-700' : 'hover:bg-blue-500'}`}
+            >
+              Consultar Preço
+            </button>
+            <button
+              onClick={() => setTelaAtual('dashboard')}
+              className={`px-4 py-2 rounded ${telaAtual === 'dashboard' ? 'bg-blue-700' : 'hover:bg-blue-500'}`}
+            >
+              Produtos
+            </button>
+            <button
+              onClick={() => setTelaAtual('cadastro')}
+              className={`px-4 py-2 rounded ${telaAtual === 'cadastro' ? 'bg-blue-700' : 'hover:bg-blue-500'}`}
+            >
+              Novo Produto
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded"
+            >
+              Sair
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Conteúdo */}
+      <main className="max-w-6xl mx-auto p-6">
+        {telaAtual === 'consulta' && <ConsultaPreco />}
+        {telaAtual === 'dashboard' && <Dashboard onEditar={() => setTelaAtual('cadastro')} />}
+        {telaAtual === 'cadastro' && <CadastroProduto onVoltar={() => setTelaAtual('dashboard')} />}
+      </main>
+    </div>
+  )
+}
