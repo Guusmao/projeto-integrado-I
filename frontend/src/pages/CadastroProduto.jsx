@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import API_URL from '../config'
 
 export default function CadastroProduto({ onVoltar }) {
   const [formData, setFormData] = useState({
@@ -30,7 +31,7 @@ export default function CadastroProduto({ onVoltar }) {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/produtos', {
+      const response = await fetch(`${API_URL}/api/produtos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

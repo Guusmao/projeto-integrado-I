@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import API_URL from '../config'
 
 export default function ConsultaPreco() {
   const [produtos, setProdutos] = useState([])
@@ -13,7 +14,7 @@ export default function ConsultaPreco() {
   const buscarProdutos = async () => {
     setCarregando(true)
     try {
-      const response = await fetch('http://localhost:5000/api/produtos')
+      const response = await fetch(`${API_URL}/api/produtos`)
       const data = await response.json()
       setProdutos(data)
     } catch (err) {

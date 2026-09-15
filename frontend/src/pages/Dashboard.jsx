@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import API_URL from '../config'
 
 export default function Dashboard({ onEditar }) {
   const [produtos, setProdutos] = useState([])
@@ -18,7 +19,7 @@ export default function Dashboard({ onEditar }) {
   const buscarProdutos = async () => {
     setCarregando(true)
     try {
-      const response = await fetch('http://localhost:5000/api/produtos')
+      const response = await fetch(`${API_URL}/api/produtos`)
       const data = await response.json()
       setProdutos(data)
     } catch (err) {
@@ -40,7 +41,7 @@ export default function Dashboard({ onEditar }) {
 
   const handleSalvarEdicao = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/produtos/${produtoEditando}`, {
+      const response = await fetch(`${API_URL}/api/produtos/${produtoEditando}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -63,7 +64,7 @@ export default function Dashboard({ onEditar }) {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/produtos/${id}`, {
+      const response = await fetch(`${API_URL}/api/produtos/${id}`, {
         method: 'DELETE'
       })
 
