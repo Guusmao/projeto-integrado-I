@@ -43,7 +43,7 @@ export default function ConsultaPreco() {
             placeholder="Digite o nome do produto..."
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="w-full px-4 py-3 border-2 border-blue-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-lg"
+            className="w-full px-4 py-3 border-2 border-deposito-laranja rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja text-lg"
             autoFocus
           />
 
@@ -61,7 +61,7 @@ export default function ConsultaPreco() {
                 onClick={() => setProdutoSelecionado(produto)}
                 className={`w-full text-left px-4 py-3 rounded-lg transition ${
                   produtoSelecionado?.id === produto.id
-                    ? 'bg-blue-600 text-white font-semibold'
+                    ? 'bg-deposito-laranja text-white font-semibold'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
                 }`}
               >
@@ -86,7 +86,7 @@ export default function ConsultaPreco() {
             <div className="grid grid-cols-2 gap-6 mb-8">
               <div className="bg-white rounded-lg p-6 shadow-md">
                 <p className="text-gray-600 text-sm font-semibold mb-2">PREÇO DE VENDA À VISTA</p>
-                <p className="text-4xl font-bold text-blue-600">
+                <p className="text-4xl font-bold text-deposito-azul">
                   R$ {produtoSelecionado.preco_venda.toFixed(2)}
                 </p>
               </div>

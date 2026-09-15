@@ -94,7 +94,7 @@ export default function Dashboard({ onEditar }) {
         <h2 className="text-3xl font-bold text-gray-800">📋 Lista de Produtos</h2>
         <button
           onClick={onEditar}
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg"
+          className="bg-deposito-laranja hover:bg-deposito-laranja-escuro text-white font-bold py-2 px-4 rounded-lg"
         >
           ➕ Novo Produto
         </button>
@@ -158,7 +158,7 @@ export default function Dashboard({ onEditar }) {
                     <td className="px-4 py-3 text-center space-x-2">
                       <button
                         onClick={handleSalvarEdicao}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
+                        className="bg-deposito-azul hover:bg-deposito-azul text-white px-3 py-1 rounded text-sm"
                       >
                         ✓ Salvar
                       </button>

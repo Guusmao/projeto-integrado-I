@@ -34,25 +34,25 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Navbar */}
-      <nav className="bg-blue-600 text-white shadow-md">
+      <nav className="bg-deposito-laranja text-white shadow-md">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
           <h1 className="text-2xl font-bold">📦 Depósito Piauí</h1>
           <div className="flex gap-4 items-center">
             <button
               onClick={() => setTelaAtual('consulta')}
-              className={`px-4 py-2 rounded ${telaAtual === 'consulta' ? 'bg-blue-700' : 'hover:bg-blue-500'}`}
+              className={`px-4 py-2 rounded ${telaAtual === 'consulta' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
             >
               Consultar Preço
             </button>
             <button
               onClick={() => setTelaAtual('dashboard')}
-              className={`px-4 py-2 rounded ${telaAtual === 'dashboard' ? 'bg-blue-700' : 'hover:bg-blue-500'}`}
+              className={`px-4 py-2 rounded ${telaAtual === 'dashboard' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
             >
               Produtos
             </button>
             <button
               onClick={() => setTelaAtual('cadastro')}
-              className={`px-4 py-2 rounded ${telaAtual === 'cadastro' ? 'bg-blue-700' : 'hover:bg-blue-500'}`}
+              className={`px-4 py-2 rounded ${telaAtual === 'cadastro' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
             >
               Novo Produto
             </button>

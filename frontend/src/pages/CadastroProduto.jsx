@@ -107,7 +107,7 @@ export default function CadastroProduto({ onVoltar }) {
               value={formData.nome}
               onChange={handleChange}
               placeholder="Ex: Cimento CP-32 (saco 50kg)"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
               disabled={carregando}
             />
           </div>
@@ -126,7 +126,7 @@ export default function CadastroProduto({ onVoltar }) {
                   onChange={handleChange}
                   placeholder="0.00"
                   step="0.01"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
                   disabled={carregando}
                 />
               </div>
@@ -145,7 +145,7 @@ export default function CadastroProduto({ onVoltar }) {
                   onChange={handleChange}
                   placeholder="0.00"
                   step="0.01"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
                   disabled={carregando}
                 />
               </div>
@@ -166,7 +166,7 @@ export default function CadastroProduto({ onVoltar }) {
                 step="0.1"
                 min="0"
                 max="100"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
                 disabled={carregando}
               />
               <span className="text-gray-700 font-semibold ml-2">%</span>
@@ -179,7 +179,7 @@ export default function CadastroProduto({ onVoltar }) {
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p className="text-gray-600 text-sm mb-1">Preço Venda</p>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-2xl font-bold text-deposito-azul">
                   R$ {formData.preco_venda ? parseFloat(formData.preco_venda).toFixed(2) : '0.00'}
                 </p>
               </div>

@@ -35,7 +35,7 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-deposito-laranja to-deposito-azul flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">📦</h1>
@@ -51,7 +51,7 @@ export default function Login({ onLogin }) {
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
               placeholder="Digite seu usuário"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
               disabled={carregando}
             />
           </div>
@@ -63,7 +63,7 @@ export default function Login({ onLogin }) {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               placeholder="Digite sua senha"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
               disabled={carregando}
             />
           </div>
@@ -77,7 +77,7 @@ export default function Login({ onLogin }) {
           <button
             type="submit"
             disabled={carregando}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
+            className="w-full bg-deposito-laranja hover:bg-deposito-laranja-escuro text-white font-bold py-2 px-4 rounded-lg transition"
           >
             {carregando ? 'Entrando...' : 'Entrar'}
           </button>
