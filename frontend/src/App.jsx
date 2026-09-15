@@ -37,7 +37,7 @@ export default function App() {
       <nav className="bg-deposito-laranja text-white shadow-md">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Depósito Piauí" className="h-10" />
+            <img src="/logo-512x512.png" alt="Depósito Piauí" className="h-10" />
             <h1 className="text-2xl font-bold">Depósito Piauí</h1>
           </div>
           <div className="flex gap-4 items-center">

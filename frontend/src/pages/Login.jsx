@@ -39,7 +39,7 @@ export default function Login({ onLogin }) {
     <div className="min-h-screen bg-gradient-to-br from-deposito-laranja to-deposito-azul flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <img src="/logo.png" alt="Depósito Piauí" className="w-24 mx-auto mb-4" />
+          <img src="/logo-512x512.png" alt="Depósito Piauí" className="w-24 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-800">Depósito Piauí</h2>
           <p className="text-gray-600 mt-2">Sistema de Consulta de Preços</p>
         </div>
