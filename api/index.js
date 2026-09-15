@@ -8,6 +8,11 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// ============= ROTA DE TESTE =============
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Backend is running' });
+});
+
 // ============= ROTAS DE AUTENTICAÇÃO =============
 
 app.post('/api/login', (req, res) => {
