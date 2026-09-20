@@ -106,7 +106,6 @@ export default function Dashboard({ onEditar }) {
           <thead>
             <tr className="bg-gray-200 border-b-2 border-gray-400">
               <th className="text-left px-4 py-3 font-semibold text-gray-700">Produto</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700">Preço Compra</th>
               <th className="text-center px-4 py-3 font-semibold text-gray-700">Preço Venda</th>
               <th className="text-center px-4 py-3 font-semibold text-gray-700">Desconto</th>
               <th className="text-center px-4 py-3 font-semibold text-gray-700">Preço Final</th>
@@ -124,15 +123,6 @@ export default function Dashboard({ onEditar }) {
                         value={formData.nome}
                         onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                         className="w-full px-2 py-1 border border-gray-300 rounded"
-                      />
-                    </td>
-                    <td className="px-4 py-3">
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={formData.preco_compra}
-                        onChange={(e) => setFormData({ ...formData, preco_compra: parseFloat(e.target.value) })}
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-center"
                       />
                     </td>
                     <td className="px-4 py-3">
@@ -174,9 +164,6 @@ export default function Dashboard({ onEditar }) {
                 ) : (
                   <>
                     <td className="px-4 py-3 font-medium text-gray-800">{produto.nome}</td>
-                    <td className="px-4 py-3 text-center text-gray-700">
-                      R$ {produto.preco_compra.toFixed(2)}
-                    </td>
                     <td className="px-4 py-3 text-center text-gray-700">
                       R$ {produto.preco_venda.toFixed(2)}
                     </td>
