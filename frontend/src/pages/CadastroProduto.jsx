@@ -148,7 +148,7 @@ export default function CadastroProduto({ onVoltar }) {
           {/* Preview */}
           <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
             <h3 className="font-bold text-gray-800 mb-4">📊 Preview</h3>
-            <div className="grid grid-cols-2 gap-4 text-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
               <div>
                 <p className="text-gray-600 text-sm mb-1">Preço Venda</p>
                 <p className="text-2xl font-bold text-deposito-azul">

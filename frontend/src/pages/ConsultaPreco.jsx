@@ -84,7 +84,7 @@ export default function ConsultaPreco() {
               {produtoSelecionado.nome}
             </h3>
 
-            <div className="grid grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
               <div className="bg-white rounded-lg p-6 shadow-md">
                 <p className="text-gray-600 text-sm font-semibold mb-2">PREÇO DE VENDA À VISTA</p>
                 <p className="text-4xl font-bold text-deposito-azul">

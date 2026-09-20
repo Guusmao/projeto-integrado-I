@@ -66,36 +66,36 @@ export default function App() {
       <nav className="bg-deposito-laranja text-white shadow-md">
         <div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
           <img src="/logo-512x512.png" alt="Depósito Piauí" className="h-32" />
-          <div className="flex gap-4 items-center">
+          <div className="flex flex-wrap gap-2 sm:gap-4 items-center">
             <button
               onClick={() => setTelaAtual('consulta')}
-              className={`px-4 py-2 rounded ${telaAtual === 'consulta' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
+              className={`px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base rounded ${telaAtual === 'consulta' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
             >
               Consultar Preço
             </button>
             <button
               onClick={() => setTelaAtual('dashboard')}
-              className={`px-4 py-2 rounded ${telaAtual === 'dashboard' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
+              className={`px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base rounded ${telaAtual === 'dashboard' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
             >
               Produtos
             </button>
             <button
               onClick={() => setTelaAtual('cadastro')}
-              className={`px-4 py-2 rounded ${telaAtual === 'cadastro' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
+              className={`px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base rounded ${telaAtual === 'cadastro' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
             >
               Novo Produto
             </button>
             {installPrompt && (
               <button
                 onClick={handleInstallClick}
-                className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded font-semibold"
+                className="px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base bg-green-500 hover:bg-green-600 rounded font-semibold"
               >
                 ⬇️ Instalar App
               </button>
             )}
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded"
+              className="px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base bg-red-500 hover:bg-red-600 rounded"
             >
               Sair
             </button>
