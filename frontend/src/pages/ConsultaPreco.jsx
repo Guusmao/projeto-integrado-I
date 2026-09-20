@@ -79,25 +79,25 @@ export default function ConsultaPreco() {
       {/* Coluna de Detalhe */}
       <div className="lg:col-span-2">
         {produtoSelecionado ? (
-          <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg shadow-lg p-8 border-2 border-green-400">
-            <h3 className="text-3xl font-bold text-gray-800 mb-6">
+          <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg shadow-lg p-4 sm:p-6 md:p-8 border-2 border-green-400">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-6">
               {produtoSelecionado.nome}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white rounded-lg p-6 shadow-md">
+              <div className="bg-white rounded-lg p-4 sm:p-6 shadow-md">
                 <p className="text-gray-600 text-sm font-semibold mb-2">PREÇO DE VENDA À VISTA</p>
-                <p className="text-4xl font-bold text-deposito-azul">
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-deposito-azul">
                   R$ {produtoSelecionado.preco_venda.toFixed(2)}
                 </p>
               </div>
 
               {produtoSelecionado.desconto > 0 && (
-                <div className="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-lg p-6 shadow-md border-2 border-orange-400">
+                <div className="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-lg p-4 sm:p-6 shadow-md border-2 border-orange-400">
                   <p className="text-gray-800 text-sm font-semibold mb-2">
                     PREÇO COM DESCONTO ({produtoSelecionado.desconto}%)
                   </p>
-                  <p className="text-4xl font-bold text-orange-600">
+                  <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-600">
                     R$ {calcularPrecoComDesconto(produtoSelecionado.preco_venda, produtoSelecionado.desconto).toFixed(2)}
                   </p>
                   <p className="text-sm text-orange-700 mt-2">

@@ -92,7 +92,7 @@ export default function Dashboard({ onEditar }) {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">📋 Lista de Produtos</h2>
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">📋 Lista de Produtos</h2>
         <button
           onClick={onEditar}
           className="bg-deposito-laranja hover:bg-deposito-laranja-escuro text-white font-bold py-2 px-4 rounded-lg"
