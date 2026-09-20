@@ -4,7 +4,6 @@ import API_URL from '../config'
 export default function CadastroProduto({ onVoltar }) {
   const [formData, setFormData] = useState({
     nome: '',
-    preco_compra: '',
     preco_venda: '',
     desconto: 0
   })
@@ -24,7 +23,7 @@ export default function CadastroProduto({ onVoltar }) {
     setCarregando(true)
     setMensagem('')
 
-    if (!formData.nome || !formData.preco_compra || !formData.preco_venda) {
+    if (!formData.nome || !formData.preco_venda) {
       setMensagem('❌ Preencha todos os campos obrigatórios')
       setCarregando(false)
       return
@@ -38,7 +37,7 @@ export default function CadastroProduto({ onVoltar }) {
         },
         body: JSON.stringify({
           nome: formData.nome,
-          preco_compra: parseFloat(formData.preco_compra),
+          preco_compra: parseFloat(formData.preco_venda) * 0.6,
           preco_venda: parseFloat(formData.preco_venda),
           desconto: formData.desconto
         })
@@ -50,7 +49,6 @@ export default function CadastroProduto({ onVoltar }) {
         setMensagem('✅ Produto cadastrado com sucesso!')
         setFormData({
           nome: '',
-          preco_compra: '',
           preco_venda: '',
           desconto: 0
         })
@@ -75,12 +73,6 @@ export default function CadastroProduto({ onVoltar }) {
     return preco - (preco * (desconto / 100))
   }
 
-  const calcularMargem = () => {
-    if (!formData.preco_compra || !formData.preco_venda) return 0
-    const compra = parseFloat(formData.preco_compra)
-    const venda = parseFloat(formData.preco_venda)
-    return (((venda - compra) / compra) * 100).toFixed(1)
-  }
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -113,43 +105,22 @@ export default function CadastroProduto({ onVoltar }) {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                Preço de Compra <span className="text-red-600">*</span>
-              </label>
-              <div className="flex items-center">
-                <span className="text-gray-700 font-semibold mr-2">R$</span>
-                <input
-                  type="number"
-                  name="preco_compra"
-                  value={formData.preco_compra}
-                  onChange={handleChange}
-                  placeholder="0.00"
-                  step="0.01"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
-                  disabled={carregando}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                Preço de Venda <span className="text-red-600">*</span>
-              </label>
-              <div className="flex items-center">
-                <span className="text-gray-700 font-semibold mr-2">R$</span>
-                <input
-                  type="number"
-                  name="preco_venda"
-                  value={formData.preco_venda}
-                  onChange={handleChange}
-                  placeholder="0.00"
-                  step="0.01"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
-                  disabled={carregando}
-                />
-              </div>
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Preço de Venda <span className="text-red-600">*</span>
+            </label>
+            <div className="flex items-center">
+              <span className="text-gray-700 font-semibold mr-2">R$</span>
+              <input
+                type="number"
+                name="preco_venda"
+                value={formData.preco_venda}
+                onChange={handleChange}
+                placeholder="0.00"
+                step="0.01"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
+                disabled={carregando}
+              />
             </div>
           </div>
 
@@ -177,7 +148,7 @@ export default function CadastroProduto({ onVoltar }) {
           {/* Preview */}
           <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
             <h3 className="font-bold text-gray-800 mb-4">📊 Preview</h3>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-2 gap-4 text-center">
               <div>
                 <p className="text-gray-600 text-sm mb-1">Preço Venda</p>
                 <p className="text-2xl font-bold text-deposito-azul">
@@ -188,12 +159,6 @@ export default function CadastroProduto({ onVoltar }) {
                 <p className="text-gray-600 text-sm mb-1">Preço Final</p>
                 <p className="text-2xl font-bold text-green-600">
                   R$ {calcularPrecoComDesconto().toFixed(2)}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-600 text-sm mb-1">Margem Lucro</p>
-                <p className="text-2xl font-bold text-purple-600">
-                  {calcularMargem()}%
                 </p>
               </div>
             </div>
