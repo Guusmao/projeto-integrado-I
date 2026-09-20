@@ -35,7 +35,7 @@ export default function App() {
     <div className="min-h-screen bg-gray-100">
       {/* Navbar */}
       <nav className="bg-deposito-laranja text-white shadow-md">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+        <div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
           <img src="/logo-512x512.png" alt="Depósito Piauí" className="h-32" />
           <div className="flex gap-4 items-center">
             <button
