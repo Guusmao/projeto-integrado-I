@@ -1,0 +1,14 @@
+{
+  "name": "Depósito Piauí - Sistema de Preços",
+  "short_name": "Depósito Piauí",
+  "description": "Sistema de Consulta de Preços",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0023A5",
+  "icons": [
+    { "src": "/logo-512x512.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/logo-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

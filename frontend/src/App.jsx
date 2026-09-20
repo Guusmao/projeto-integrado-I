@@ -7,6 +7,7 @@ import CadastroProduto from './pages/CadastroProduto'
 export default function App() {
   const [usuarioLogado, setUsuarioLogado] = useState(false)
   const [telaAtual, setTelaAtual] = useState('consulta')
+  const [installPrompt, setInstallPrompt] = useState(null)
 
   useEffect(() => {
     const usuario = localStorage.getItem('usuario')
@@ -14,6 +15,34 @@ export default function App() {
       setUsuarioLogado(true)
     }
   }, [])
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault()
+      setInstallPrompt(e)
+    }
+
+    const handleAppInstalled = () => {
+      setInstallPrompt(null)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('appinstalled', handleAppInstalled)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', handleAppInstalled)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (!installPrompt) return
+    installPrompt.prompt()
+    const { outcome } = await installPrompt.userChoice
+    if (outcome === 'accepted') {
+      setInstallPrompt(null)
+    }
+  }
 
   const handleLogin = (usuario) => {
     localStorage.setItem('usuario', usuario)
@@ -56,6 +85,14 @@ export default function App() {
             >
               Novo Produto
             </button>
+            {installPrompt && (
+              <button
+                onClick={handleInstallClick}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded font-semibold"
+              >
+                ⬇️ Instalar App
+              </button>
+            )}
             <button
               onClick={handleLogout}
               className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded"
