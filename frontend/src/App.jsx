@@ -36,7 +36,7 @@ export default function App() {
       {/* Navbar */}
       <nav className="bg-deposito-laranja text-white shadow-md">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-          <img src="/logo-512x512.png" alt="Depósito Piauí" className="h-24" />
+          <img src="/logo-512x512.png" alt="Depósito Piauí" className="h-32" />
           <div className="flex gap-4 items-center">
             <button
               onClick={() => setTelaAtual('consulta')}
