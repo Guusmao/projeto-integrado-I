@@ -106,24 +106,6 @@ export default function ConsultaPreco() {
                 </div>
               )}
             </div>
-
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <h4 className="text-lg font-bold text-gray-800 mb-4">Informações Adicionais</h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-gray-600">Preço de Compra</p>
-                  <p className="text-lg font-semibold text-gray-800">
-                    R$ {produtoSelecionado.preco_compra.toFixed(2)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Margem de Lucro</p>
-                  <p className="text-lg font-semibold text-green-600">
-                    {(((produtoSelecionado.preco_venda - produtoSelecionado.preco_compra) / produtoSelecionado.preco_compra) * 100).toFixed(1)}%
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
