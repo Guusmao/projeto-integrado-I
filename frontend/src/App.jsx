@@ -1,22 +1,13 @@
 import { useState, useEffect } from 'react'
-import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import ConsultaPreco from './pages/ConsultaPreco'
 import CadastroProduto from './pages/CadastroProduto'
 import Orcamento from './pages/Orcamento'
 
 export default function App() {
-  const [usuarioLogado, setUsuarioLogado] = useState(false)
   const [telaAtual, setTelaAtual] = useState('consulta')
   const [installPrompt, setInstallPrompt] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  useEffect(() => {
-    const usuario = localStorage.getItem('usuario')
-    if (usuario) {
-      setUsuarioLogado(true)
-    }
-  }, [])
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
@@ -46,25 +37,9 @@ export default function App() {
     }
   }
 
-  const handleLogin = (usuario) => {
-    localStorage.setItem('usuario', usuario)
-    setUsuarioLogado(true)
-    setTelaAtual('consulta')
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('usuario')
-    setUsuarioLogado(false)
-    setTelaAtual('consulta')
-  }
-
   const handleNavClick = (tela) => {
     setTelaAtual(tela)
     setMobileMenuOpen(false)
-  }
-
-  if (!usuarioLogado) {
-    return <Login onLogin={handleLogin} />
   }
 
   return (
@@ -116,12 +91,6 @@ export default function App() {
                 ⬇️ Instalar App
               </button>
             )}
-            <button
-              onClick={handleLogout}
-              className="px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base bg-red-500 hover:bg-red-600 rounded"
-            >
-              Sair
-            </button>
           </div>
         </div>
 
@@ -163,15 +132,6 @@ export default function App() {
                 ⬇️ Instalar App
               </button>
             )}
-            <button
-              onClick={() => {
-                handleLogout()
-                setMobileMenuOpen(false)
-              }}
-              className="w-full text-left px-4 py-3 bg-red-600 hover:bg-red-700"
-            >
-              Sair
-            </button>
           </div>
         )}
       </nav>

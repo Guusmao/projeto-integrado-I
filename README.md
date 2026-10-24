@@ -6,7 +6,6 @@ Protótipo funcional de um sistema web rápido e simples para consulta de preço
 
 ## 🎯 O que o sistema faz
 
-✅ **Login seguro** (username: admin, senha: admin)  
 ✅ **Consulta rápida de preços** - A tela mais importante! Filtro em tempo real  
 ✅ **Listagem de produtos** com preços de compra, venda e descontos  
 ✅ **Cadastro de produtos** com cálculo automático de preço com desconto  
@@ -108,20 +107,11 @@ Seu navegador deve abrir automaticamente em `http://localhost:3000`. Se não abr
 
 ---
 
-## 🔐 Dados de Acesso
-
-**Usuário:** `admin`  
-**Senha:** `admin`
-
-(Isso é proposital! Em um sistema real, usaríamos hash seguro de senhas. Mas como é um protótipo de apresentação, deixamos assim pra facilitar.)
-
----
-
 ## 📱 Como Usar o Sistema
 
 ### 🔍 Tela de Consulta (a mais importante!)
 
-1. Faça login com admin/admin
+1. Abra o sistema (já entra direto, sem login)
 2. Na tela "Consultar Preço", digite o nome de um produto na busca
 3. Clique no produto pra ver o preço de venda e o preço com desconto em destaque
 4. Perfeito pra quando um cliente quer saber o preço rapidinho!
@@ -160,7 +150,6 @@ projeto-integrado-I/
 │   │   ├── main.jsx          (entry point do React)
 │   │   ├── App.jsx           (componente principal)
 │   │   └── pages/
-│   │       ├── Login.jsx     (tela de login)
 │   │       ├── ConsultaPreco.jsx  (tela de busca rápida)
 │   │       ├── Dashboard.jsx      (listagem de produtos)
 │   │       └── CadastroProduto.jsx (cadastro de novos produtos)
