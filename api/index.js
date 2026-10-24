@@ -1,17 +1,24 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { createClient } = require('@supabase/supabase-js');
+const { neon } = require('@neondatabase/serverless');
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
+const sql = neon(process.env.DATABASE_URL);
+
+// O Postgres devolve bigint e numeric como texto; o front espera números
+// (ex.: produto.preco_venda.toFixed(2)), como vinha do Supabase.
+const formatarProduto = (row) => ({
+  ...row,
+  id: Number(row.id),
+  preco_compra: Number(row.preco_compra),
+  preco_venda: Number(row.preco_venda),
+  desconto: row.desconto === null ? null : Number(row.desconto)
+});
 
 // ============= ROTA DE TESTE =============
 app.get('/api/health', (req, res) => {
@@ -38,13 +45,8 @@ app.post('/api/login', (req, res) => {
 // GET - Listar todos os produtos
 app.get('/api/produtos', async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from('produtos')
-      .select('*')
-      .order('id', { ascending: true });
-
-    if (error) throw error;
-    res.json(data);
+    const rows = await sql`select * from produtos order by id asc`;
+    res.json(rows.map(formatarProduto));
   } catch (err) {
     console.error('GET /api/produtos falhou:', err);
     res.status(500).json({ erro: 'Erro ao buscar produtos' });
@@ -55,17 +57,13 @@ app.get('/api/produtos', async (req, res) => {
 app.get('/api/produtos/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { data, error } = await supabase
-      .from('produtos')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const [produto] = await sql`select * from produtos where id = ${id}`;
 
-    if (error || !data) {
+    if (!produto) {
       return res.status(404).json({ erro: 'Produto não encontrado' });
     }
 
-    res.json(data);
+    res.json(formatarProduto(produto));
   } catch (err) {
     res.status(500).json({ erro: 'Erro ao buscar produto' });
   }
@@ -80,19 +78,13 @@ app.post('/api/produtos', async (req, res) => {
       return res.status(400).json({ erro: 'Nome, preço de compra e preço de venda são obrigatórios' });
     }
 
-    const { data, error } = await supabase
-      .from('produtos')
-      .insert([{
-        nome,
-        preco_compra: parseFloat(preco_compra),
-        preco_venda: parseFloat(preco_venda),
-        desconto: desconto || 0
-      }])
-      .select()
-      .single();
+    const [produto] = await sql`
+      insert into produtos (nome, preco_compra, preco_venda, desconto)
+      values (${nome}, ${parseFloat(preco_compra)}, ${parseFloat(preco_venda)}, ${desconto || 0})
+      returning *
+    `;
 
-    if (error) throw error;
-    res.status(201).json(data);
+    res.status(201).json(formatarProduto(produto));
   } catch (err) {
     res.status(500).json({ erro: 'Erro ao criar produto' });
   }
@@ -108,23 +100,21 @@ app.put('/api/produtos/:id', async (req, res) => {
       return res.status(400).json({ erro: 'Nome, preço de compra e preço de venda são obrigatórios' });
     }
 
-    const { data, error } = await supabase
-      .from('produtos')
-      .update({
-        nome,
-        preco_compra: parseFloat(preco_compra),
-        preco_venda: parseFloat(preco_venda),
-        desconto: desconto || 0
-      })
-      .eq('id', id)
-      .select()
-      .single();
+    const [produto] = await sql`
+      update produtos
+      set nome = ${nome},
+          preco_compra = ${parseFloat(preco_compra)},
+          preco_venda = ${parseFloat(preco_venda)},
+          desconto = ${desconto || 0}
+      where id = ${id}
+      returning *
+    `;
 
-    if (error || !data) {
+    if (!produto) {
       return res.status(404).json({ erro: 'Produto não encontrado' });
     }
 
-    res.json(data);
+    res.json(formatarProduto(produto));
   } catch (err) {
     res.status(500).json({ erro: 'Erro ao atualizar produto' });
   }
@@ -134,12 +124,9 @@ app.put('/api/produtos/:id', async (req, res) => {
 app.delete('/api/produtos/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { error } = await supabase
-      .from('produtos')
-      .delete()
-      .eq('id', id);
+    const excluidos = await sql`delete from produtos where id = ${id} returning id`;
 
-    if (error) {
+    if (excluidos.length === 0) {
       return res.status(404).json({ erro: 'Produto não encontrado' });
     }
 
