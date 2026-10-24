@@ -25,21 +25,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running' });
 });
 
-// ============= ROTAS DE AUTENTICAÇÃO =============
-app.post('/api/login', (req, res) => {
-  const { usuario, senha } = req.body;
-
-  if (!usuario || !senha) {
-    return res.status(400).json({ erro: 'Usuário e senha obrigatórios' });
-  }
-
-  if (usuario === 'admin' && senha === 'admin') {
-    return res.json({ sucesso: true, mensagem: 'Login realizado', usuario });
-  } else {
-    return res.status(401).json({ erro: 'Usuário ou senha inválidos' });
-  }
-});
-
 // ============= ROTAS DE PRODUTOS =============
 
 // GET - Listar todos os produtos
