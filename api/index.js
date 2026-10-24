@@ -46,6 +46,7 @@ app.get('/api/produtos', async (req, res) => {
     if (error) throw error;
     res.json(data);
   } catch (err) {
+    console.error('GET /api/produtos falhou:', err);
     res.status(500).json({ erro: 'Erro ao buscar produtos' });
   }
 });

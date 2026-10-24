@@ -21,9 +21,13 @@ export default function Dashboard({ onEditar }) {
     try {
       const response = await fetch(`${API_URL}/api/produtos`)
       const data = await response.json()
+      if (!response.ok || !Array.isArray(data)) {
+        throw new Error(data?.erro || `Resposta inesperada da API (${response.status})`)
+      }
       setProdutos(data)
     } catch (err) {
       console.error('Erro ao buscar produtos:', err)
+      setProdutos([])
     } finally {
       setCarregando(false)
     }
