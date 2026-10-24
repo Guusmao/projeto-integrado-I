@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import ConsultaPreco from './pages/ConsultaPreco'
 import CadastroProduto from './pages/CadastroProduto'
+import Orcamento from './pages/Orcamento'
 
 export default function App() {
   const [usuarioLogado, setUsuarioLogado] = useState(false)
@@ -67,9 +68,9 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 print:bg-white">
       {/* Navbar */}
-      <nav className="bg-deposito-laranja text-white shadow-md">
+      <nav className="bg-deposito-laranja text-white shadow-md print:hidden">
         <div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
           <img src="/logo-512x512.png" alt="Depósito Piauí" className="h-20 sm:h-32" />
 
@@ -88,6 +89,12 @@ export default function App() {
               className={`px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base rounded ${telaAtual === 'consulta' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
             >
               Consultar Preço
+            </button>
+            <button
+              onClick={() => setTelaAtual('orcamento')}
+              className={`px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base rounded ${telaAtual === 'orcamento' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
+            >
+              Orçamento
             </button>
             <button
               onClick={() => setTelaAtual('dashboard')}
@@ -128,6 +135,12 @@ export default function App() {
               Consultar Preço
             </button>
             <button
+              onClick={() => handleNavClick('orcamento')}
+              className={`w-full text-left px-4 py-3 ${telaAtual === 'orcamento' ? 'bg-deposito-azul' : 'hover:bg-deposito-azul hover:bg-opacity-50'}`}
+            >
+              Orçamento
+            </button>
+            <button
               onClick={() => handleNavClick('dashboard')}
               className={`w-full text-left px-4 py-3 ${telaAtual === 'dashboard' ? 'bg-deposito-azul' : 'hover:bg-deposito-azul hover:bg-opacity-50'}`}
             >
@@ -164,8 +177,9 @@ export default function App() {
       </nav>
 
       {/* Conteúdo */}
-      <main className="max-w-6xl mx-auto p-4 sm:p-6">
+      <main className="max-w-6xl mx-auto p-4 sm:p-6 print:max-w-none print:p-0">
         {telaAtual === 'consulta' && <ConsultaPreco />}
+        {telaAtual === 'orcamento' && <Orcamento />}
         {telaAtual === 'dashboard' && <Dashboard onEditar={() => setTelaAtual('cadastro')} />}
         {telaAtual === 'cadastro' && <CadastroProduto onVoltar={() => setTelaAtual('dashboard')} />}
       </main>
