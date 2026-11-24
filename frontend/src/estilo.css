@@ -1,0 +1,155 @@
+/* Identidade visual do Depósito Piauí.
+   Cores da logo: azul #0023A5, amarelo #FCE70F, branco.
+   Fonte: Archivo (variável em peso e largura), embutida no app — funciona sem internet. */
+
+:root {
+  --azul: #0023A5;
+  --azul-escuro: #00187A;
+  --amarelo: #FCE70F;
+  --cal: #EEF0F5;
+  --tinta: #141B3C;
+  --concreto: #5E667D;
+  --linha: #D7DBE5;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--cal);
+  color: var(--tinta);
+  font-family: 'Archivo Variable', Archivo, system-ui, sans-serif;
+  font-stretch: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+.largura-condensada { font-stretch: 75%; }
+.largura-expandida { font-stretch: 118%; }
+
+:focus { outline: none; }
+:focus-visible {
+  outline: 3px solid var(--azul);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.no-azul :focus-visible { outline-color: var(--amarelo); }
+
+/* Campos: fundo branco, borda que fica azul ao focar */
+.campo {
+  width: 100%;
+  background: #fff;
+  border: 2px solid var(--linha);
+  border-radius: 6px;
+  padding: 0.65rem 0.85rem;
+  font: inherit;
+  color: var(--tinta);
+  transition: border-color 120ms;
+}
+.campo::placeholder { color: #8b91a3; }
+.campo:focus { border-color: var(--azul); outline: none; box-shadow: 0 0 0 3px rgb(0 35 165 / 0.15); }
+.campo:disabled { background: var(--cal); }
+.campo-grande { font-size: 1.15rem; padding: 0.85rem 1rem 0.85rem 2.9rem; }
+
+/* Some com as setinhas dos campos de número */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+/* ===== Etiqueta de preço ===== */
+.etiqueta {
+  position: relative;
+  background: var(--amarelo);
+  color: var(--azul);
+  border-radius: 4px 4px 4px 4px;
+  padding: 1.5rem 1.75rem 1.75rem 3.25rem;
+  clip-path: polygon(1.6rem 0, 100% 0, 100% 100%, 1.6rem 100%, 0 calc(100% - 1.6rem), 0 1.6rem);
+}
+/* furo da etiqueta */
+.etiqueta::before {
+  content: '';
+  position: absolute;
+  left: 1.05rem;
+  top: 50%;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-top: -0.425rem;
+  border-radius: 50%;
+  background: var(--cal);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.25);
+}
+.etiqueta-rotulo { font-weight: 600; font-size: 0.95rem; margin: 0; }
+.etiqueta-preco {
+  display: flex;
+  align-items: flex-start;
+  margin: 0.1rem 0 0;
+  font-stretch: 72%;
+  font-weight: 850;
+  font-size: clamp(4.25rem, 11vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.etiqueta-moeda { font-size: 0.3em; font-weight: 700; margin: 0.3em 0.25em 0 0; font-stretch: 100%; }
+.etiqueta-centavos { font-size: 0.5em; margin-top: 0.06em; }
+.etiqueta-desconto {
+  margin-top: 1.25rem;
+  padding-top: 0.9rem;
+  border-top: 2px dashed rgb(0 35 165 / 0.45);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.5rem 1.5rem;
+  font-weight: 600;
+}
+.etiqueta-desconto p { margin: 0; }
+.etiqueta-preco-desconto {
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 2.25rem;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.etiqueta-economia { font-size: 0.95rem; }
+.etiqueta-compacta { padding: 1rem 1.25rem 1.1rem 2.75rem; }
+.etiqueta-compacta .etiqueta-preco { font-size: 3.5rem; }
+.etiqueta-compacta .etiqueta-preco-desconto { font-size: 1.6rem; }
+.etiqueta-compacta::before { left: 0.9rem; }
+
+/* A etiqueta "pendura" ao escolher um produto: único movimento automático do app */
+.etiqueta-entrando { animation: pendurar 260ms cubic-bezier(.2,.9,.3,1.2); transform-origin: 0 50%; }
+@keyframes pendurar {
+  from { transform: rotate(-2.5deg) translateY(-6px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .etiqueta-entrando { animation: none; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* Espaço para a barra de abas fixa no celular */
+.com-barra-inferior { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+@media (min-width: 768px) { .com-barra-inferior { padding-bottom: 0; } }
+
+@media print {
+  body { background: #fff; }
+}
+
+/* Logo recortada: o PNG é quadrado com muita margem azul; aqui mostramos só a marca */
+.logo-recorte {
+  --h: 52px;
+  position: relative;
+  display: block;
+  height: var(--h);
+  width: calc(var(--h) * 422 / 194);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.logo-recorte img {
+  position: absolute;
+  max-width: none;
+  width: calc(var(--h) * 512 / 194);
+  left: calc(var(--h) * -52 / 194);
+  top: calc(var(--h) * -162 / 194);
+}
+@media (min-width: 768px) { .logo-recorte { --h: 64px; } }

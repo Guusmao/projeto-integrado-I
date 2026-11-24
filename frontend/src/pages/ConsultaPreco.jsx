@@ -1,11 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import API_URL from '../config'
+import Etiqueta from '../components/Etiqueta'
+import { IconeBusca } from '../components/Icones'
+import { formatarMoeda, calcularPrecoComDesconto, formatarPercentual } from '../util'
 
 export default function ConsultaPreco() {
   const [produtos, setProdutos] = useState([])
   const [busca, setBusca] = useState('')
   const [produtoSelecionado, setProdutoSelecionado] = useState(null)
   const [carregando, setCarregando] = useState(false)
+  const [erro, setErro] = useState('')
+  const detalheRef = useRef(null)
 
   useEffect(() => {
     buscarProdutos()
@@ -13,6 +18,7 @@ export default function ConsultaPreco() {
 
   const buscarProdutos = async () => {
     setCarregando(true)
+    setErro('')
     try {
       const response = await fetch(`${API_URL}/api/produtos`)
       const data = await response.json()
@@ -23,6 +29,7 @@ export default function ConsultaPreco() {
     } catch (err) {
       console.error('Erro ao buscar produtos:', err)
       setProdutos([])
+      setErro('Não foi possível carregar os produtos. Verifique a internet e tente de novo.')
     } finally {
       setCarregando(false)
     }
@@ -32,91 +39,101 @@ export default function ConsultaPreco() {
     p.nome.toLowerCase().includes(busca.toLowerCase())
   )
 
-  const calcularPrecoComDesconto = (preco, desconto) => {
-    return preco - (preco * (desconto / 100))
+  const selecionar = (produto) => {
+    setProdutoSelecionado(produto)
+    // No celular a etiqueta fica acima da lista: leva a tela até ela
+    if (window.matchMedia('(max-width: 1023px)').matches) {
+      requestAnimationFrame(() => detalheRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    }
   }
 
+  const total = produtosFiltrados.length
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Coluna de Busca */}
-      <div className="lg:col-span-1">
-        <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">🔍 Buscar Produto</h2>
-
-          <input
-            type="text"
-            placeholder="Digite o nome do produto..."
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            className="w-full px-4 py-3 border-2 border-deposito-laranja rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja text-lg"
-            autoFocus
-          />
-
-          <div className="mt-4">
-            <p className="text-gray-600 text-sm">
-              {produtosFiltrados.length} produto{produtosFiltrados.length !== 1 ? 's' : ''} encontrado{produtosFiltrados.length !== 1 ? 's' : ''}
-            </p>
-          </div>
-
-          {/* Lista de Produtos */}
-          <div className="mt-6 space-y-2 max-h-96 overflow-y-auto">
-            {produtosFiltrados.map(produto => (
-              <button
-                key={produto.id}
-                onClick={() => setProdutoSelecionado(produto)}
-                className={`w-full text-left px-4 py-3 rounded-lg transition ${
-                  produtoSelecionado?.id === produto.id
-                    ? 'bg-deposito-laranja text-white font-semibold'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                }`}
-              >
-                <p className="truncate font-medium">{produto.nome}</p>
-                <p className="text-sm opacity-75">
-                  R$ {produto.preco_venda.toFixed(2)}
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Coluna de Detalhe */}
-      <div className="lg:col-span-2">
+    <>
+    <h1 className="largura-expandida text-3xl font-extrabold text-tinta mb-5">Consultar preço</h1>
+    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-6 lg:gap-10 items-start">
+      {/* Etiqueta do produto escolhido */}
+      <section ref={detalheRef} className="lg:order-2 lg:sticky lg:top-8 scroll-mt-4" aria-live="polite">
         {produtoSelecionado ? (
-          <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg shadow-lg p-4 sm:p-6 md:p-8 border-2 border-green-400">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-6">
+          <div key={produtoSelecionado.id} className="etiqueta-entrando">
+            <h2 className="largura-expandida text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight mb-5 text-tinta">
               {produtoSelecionado.nome}
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white rounded-lg p-4 sm:p-6 shadow-md">
-                <p className="text-gray-600 text-sm font-semibold mb-2">PREÇO DE VENDA À VISTA</p>
-                <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-deposito-azul">
-                  R$ {produtoSelecionado.preco_venda.toFixed(2)}
-                </p>
-              </div>
-
-              {produtoSelecionado.desconto > 0 && (
-                <div className="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-lg p-4 sm:p-6 shadow-md border-2 border-orange-400">
-                  <p className="text-gray-800 text-sm font-semibold mb-2">
-                    PREÇO COM DESCONTO ({produtoSelecionado.desconto}%)
-                  </p>
-                  <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-600">
-                    R$ {calcularPrecoComDesconto(produtoSelecionado.preco_venda, produtoSelecionado.desconto).toFixed(2)}
-                  </p>
-                  <p className="text-sm text-orange-700 mt-2">
-                    Economiza: R$ {(produtoSelecionado.preco_venda - calcularPrecoComDesconto(produtoSelecionado.preco_venda, produtoSelecionado.desconto)).toFixed(2)}
-                  </p>
-                </div>
-              )}
-            </div>
+            </h2>
+            <Etiqueta preco={produtoSelecionado.preco_venda} desconto={produtoSelecionado.desconto} />
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <p className="text-gray-500 text-xl">👈 Selecione um produto na busca para ver os preços</p>
+          <div className="hidden lg:flex flex-col justify-center min-h-[22rem] border-2 border-dashed border-linha rounded-lg px-10 text-concreto">
+            <p className="largura-expandida text-2xl font-bold text-tinta">Qual produto o cliente quer?</p>
+            <p className="mt-2 text-lg">Busque pelo nome e escolha na lista. O preço aparece aqui.</p>
           </div>
         )}
-      </div>
+      </section>
+
+      {/* Busca e lista */}
+      <section className="lg:order-1">
+        <div className="relative">
+          <IconeBusca className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-concreto pointer-events-none" />
+          <input
+            type="search"
+            aria-label="Buscar produto pelo nome"
+            placeholder="Nome do produto, ex.: cimento"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            className="campo campo-grande"
+            autoFocus
+          />
+        </div>
+
+        <p className="mt-3 mb-2 text-sm text-concreto">
+          {carregando
+            ? 'Carregando produtos…'
+            : `${total} produto${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}`}
+        </p>
+
+        {erro && (
+          <div className="mb-3 border-l-4 border-perigo bg-white px-4 py-3 text-sm">
+            <p className="text-perigo font-semibold">{erro}</p>
+            <button onClick={buscarProdutos} className="mt-1 font-semibold text-azul underline">Tentar de novo</button>
+          </div>
+        )}
+
+        <ul className="bg-white rounded-lg border border-linha divide-y divide-linha overflow-hidden lg:max-h-[60vh] lg:overflow-y-auto">
+          {produtosFiltrados.map(produto => {
+            const ativo = produtoSelecionado?.id === produto.id
+            const final = calcularPrecoComDesconto(produto.preco_venda, produto.desconto)
+            return (
+              <li key={produto.id}>
+                <button
+                  onClick={() => selecionar(produto)}
+                  aria-pressed={ativo}
+                  className={`w-full text-left flex items-center gap-3 pl-4 pr-4 py-3 border-l-[6px] transition-colors ${
+                    ativo ? 'border-amarelo bg-azul text-white' : 'border-transparent hover:bg-cal'
+                  }`}
+                >
+                  <span className="flex-1 min-w-0">
+                    <span className="block truncate font-semibold">{produto.nome}</span>
+                    {produto.desconto > 0 && (
+                      <span className={`block text-xs ${ativo ? 'text-white/80' : 'text-concreto'}`}>
+                        {formatarPercentual(produto.desconto)} de desconto: {formatarMoeda(final)}
+                      </span>
+                    )}
+                  </span>
+                  <span className="largura-condensada text-xl font-bold tabular-nums whitespace-nowrap">
+                    {formatarMoeda(produto.preco_venda)}
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+          {!carregando && !erro && total === 0 && (
+            <li className="px-4 py-6 text-concreto">
+              {busca ? `Nenhum produto com “${busca}”. Confira a escrita ou busque só uma parte do nome.` : 'Nenhum produto cadastrado ainda.'}
+            </li>
+          )}
+        </ul>
+      </section>
     </div>
+    </>
   )
 }

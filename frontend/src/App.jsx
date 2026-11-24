@@ -3,11 +3,20 @@ import Dashboard from './pages/Dashboard'
 import ConsultaPreco from './pages/ConsultaPreco'
 import CadastroProduto from './pages/CadastroProduto'
 import Orcamento from './pages/Orcamento'
+import { IconeEtiqueta, IconeNota, IconeLista, IconeBaixar } from './components/Icones'
+
+const TELAS = [
+  { id: 'consulta', nome: 'Consultar preço', curto: 'Preço', Icone: IconeEtiqueta },
+  { id: 'orcamento', nome: 'Orçamento', curto: 'Orçamento', Icone: IconeNota },
+  // "Novo produto" não tem aba própria: abre pelo botão dentro de Produtos
+  { id: 'dashboard', nome: 'Produtos', curto: 'Produtos', Icone: IconeLista, tambem: ['cadastro'] },
+]
+
+const abaAtiva = (aba, tela) => aba.id === tela || aba.tambem?.includes(tela)
 
 export default function App() {
   const [telaAtual, setTelaAtual] = useState('consulta')
   const [installPrompt, setInstallPrompt] = useState(null)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
@@ -37,112 +46,84 @@ export default function App() {
     }
   }
 
-  const handleNavClick = (tela) => {
+  const irPara = (tela) => {
     setTelaAtual(tela)
-    setMobileMenuOpen(false)
+    window.scrollTo({ top: 0 })
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 print:bg-white">
-      {/* Navbar */}
-      <nav className="bg-deposito-laranja text-white shadow-md print:hidden">
-        <div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
-          <img src="/logo-512x512.png" alt="Depósito Piauí" className="h-20 sm:h-32" />
-
-          {/* Menu Hamburger (mobile) */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-2xl"
-          >
-            ☰
+    <div className="min-h-screen com-barra-inferior print:bg-white print:p-0">
+      {/* Cabeçalho */}
+      <header className="bg-azul text-white no-azul print:hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-6 h-16 md:h-20">
+          <button onClick={() => irPara('consulta')} aria-label="Depósito Piauí, ir para a consulta de preço">
+            <span className="logo-recorte">
+              <img src="/logo-512x512.png" alt="" />
+            </span>
           </button>
 
-          {/* Menu Desktop */}
-          <div className="hidden md:flex flex-wrap gap-2 sm:gap-4 items-center">
-            <button
-              onClick={() => setTelaAtual('consulta')}
-              className={`px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base rounded ${telaAtual === 'consulta' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
-            >
-              Consultar Preço
-            </button>
-            <button
-              onClick={() => setTelaAtual('orcamento')}
-              className={`px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base rounded ${telaAtual === 'orcamento' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
-            >
-              Orçamento
-            </button>
-            <button
-              onClick={() => setTelaAtual('dashboard')}
-              className={`px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base rounded ${telaAtual === 'dashboard' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
-            >
-              Produtos
-            </button>
-            <button
-              onClick={() => setTelaAtual('cadastro')}
-              className={`px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base rounded ${telaAtual === 'cadastro' ? 'bg-deposito-azul' : 'hover:bg-deposito-laranja-escuro'}`}
-            >
-              Novo Produto
-            </button>
-            {installPrompt && (
+          <nav className="hidden md:flex items-stretch self-stretch gap-1" aria-label="Telas">
+            {TELAS.map((aba) => (
               <button
-                onClick={handleInstallClick}
-                className="px-3 sm:px-4 py-1 sm:py-2 text-sm sm:text-base bg-green-500 hover:bg-green-600 rounded font-semibold"
+                key={aba.id}
+                onClick={() => irPara(aba.id)}
+                aria-current={abaAtiva(aba, telaAtual) ? 'page' : undefined}
+                className={`relative px-4 font-semibold transition-colors ${
+                  abaAtiva(aba, telaAtual) ? 'text-amarelo' : 'text-white/80 hover:text-white'
+                }`}
               >
-                ⬇️ Instalar App
+                {aba.nome}
+                {abaAtiva(aba, telaAtual) && (
+                  <span className="absolute left-4 right-4 bottom-0 h-1 bg-amarelo rounded-t" />
+                )}
               </button>
-            )}
-          </div>
-        </div>
+            ))}
+          </nav>
 
-        {/* Menu Mobile */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-deposito-laranja-escuro w-full">
+          {installPrompt && (
             <button
-              onClick={() => handleNavClick('consulta')}
-              className={`w-full text-left px-4 py-3 ${telaAtual === 'consulta' ? 'bg-deposito-azul' : 'hover:bg-deposito-azul hover:bg-opacity-50'}`}
+              onClick={handleInstallClick}
+              className="flex items-center gap-2 border-2 border-amarelo text-amarelo hover:bg-amarelo hover:text-azul font-semibold rounded-md px-3 py-1.5 text-sm transition-colors"
             >
-              Consultar Preço
+              <IconeBaixar className="w-4 h-4" />
+              Instalar app
             </button>
-            <button
-              onClick={() => handleNavClick('orcamento')}
-              className={`w-full text-left px-4 py-3 ${telaAtual === 'orcamento' ? 'bg-deposito-azul' : 'hover:bg-deposito-azul hover:bg-opacity-50'}`}
-            >
-              Orçamento
-            </button>
-            <button
-              onClick={() => handleNavClick('dashboard')}
-              className={`w-full text-left px-4 py-3 ${telaAtual === 'dashboard' ? 'bg-deposito-azul' : 'hover:bg-deposito-azul hover:bg-opacity-50'}`}
-            >
-              Produtos
-            </button>
-            <button
-              onClick={() => handleNavClick('cadastro')}
-              className={`w-full text-left px-4 py-3 ${telaAtual === 'cadastro' ? 'bg-deposito-azul' : 'hover:bg-deposito-azul hover:bg-opacity-50'}`}
-            >
-              Novo Produto
-            </button>
-            {installPrompt && (
-              <button
-                onClick={() => {
-                  handleInstallClick()
-                  setMobileMenuOpen(false)
-                }}
-                className="w-full text-left px-4 py-3 bg-green-600 hover:bg-green-700"
-              >
-                ⬇️ Instalar App
-              </button>
-            )}
-          </div>
-        )}
-      </nav>
+          )}
+        </div>
+      </header>
 
       {/* Conteúdo */}
-      <main className="max-w-6xl mx-auto p-4 sm:p-6 print:max-w-none print:p-0">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 print:max-w-none print:p-0">
         {telaAtual === 'consulta' && <ConsultaPreco />}
         {telaAtual === 'orcamento' && <Orcamento />}
-        {telaAtual === 'dashboard' && <Dashboard onEditar={() => setTelaAtual('cadastro')} />}
-        {telaAtual === 'cadastro' && <CadastroProduto onVoltar={() => setTelaAtual('dashboard')} />}
+        {telaAtual === 'dashboard' && <Dashboard onEditar={() => irPara('cadastro')} />}
+        {telaAtual === 'cadastro' && <CadastroProduto onVoltar={() => irPara('dashboard')} />}
       </main>
+
+      {/* Abas no celular: ficam ao alcance do polegar */}
+      <nav
+        className="md:hidden fixed bottom-0 inset-x-0 z-20 bg-white border-t border-linha grid grid-cols-3 print:hidden"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+        aria-label="Telas"
+      >
+        {TELAS.map((aba) => {
+          const { id, curto, Icone } = aba
+          const ativa = abaAtiva(aba, telaAtual)
+          return (
+            <button
+              key={id}
+              onClick={() => irPara(id)}
+              aria-current={ativa ? 'page' : undefined}
+              className={`flex flex-col items-center gap-1 pt-2 pb-2.5 text-xs font-semibold ${ativa ? 'text-azul' : 'text-concreto'}`}
+            >
+              <span className={`flex items-center justify-center w-12 h-7 rounded-full transition-colors ${ativa ? 'bg-amarelo' : ''}`}>
+                <Icone className="w-5 h-5" />
+              </span>
+              {curto}
+            </button>
+          )
+        })}
+      </nav>
     </div>
   )
 }

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import API_URL from '../config'
+import Etiqueta from '../components/Etiqueta'
+import { IconeVoltar } from '../components/Icones'
 
 export default function CadastroProduto({ onVoltar }) {
   const [formData, setFormData] = useState({
@@ -24,7 +26,7 @@ export default function CadastroProduto({ onVoltar }) {
     setMensagem('')
 
     if (!formData.nome || !formData.preco_venda) {
-      setMensagem('❌ Preencha todos os campos obrigatórios')
+      setMensagem('erro:Preencha o nome e o preço de venda.')
       setCarregando(false)
       return
     }
@@ -46,7 +48,7 @@ export default function CadastroProduto({ onVoltar }) {
       const data = await response.json()
 
       if (response.ok) {
-        setMensagem('✅ Produto cadastrado com sucesso!')
+        setMensagem(`ok:${formData.nome} cadastrado. Voltando para a lista de produtos…`)
         setFormData({
           nome: '',
           preco_venda: '',
@@ -56,132 +58,127 @@ export default function CadastroProduto({ onVoltar }) {
           onVoltar()
         }, 1500)
       } else {
-        setMensagem(`❌ Erro ao cadastrar: ${data.erro}`)
+        setMensagem(`erro:Não foi possível cadastrar: ${data.erro}`)
       }
     } catch (err) {
-      setMensagem('❌ Erro ao conectar com o servidor')
+      setMensagem('erro:Sem conexão com o servidor. Verifique a internet e tente de novo.')
       console.error('Erro:', err)
     } finally {
       setCarregando(false)
     }
   }
 
-  const calcularPrecoComDesconto = () => {
-    if (!formData.preco_venda) return 0
-    const preco = parseFloat(formData.preco_venda)
-    const desconto = parseFloat(formData.desconto) || 0
-    return preco - (preco * (desconto / 100))
-  }
-
+  const [tipoMensagem, textoMensagem] = mensagem
+    ? [mensagem.slice(0, mensagem.indexOf(':')), mensagem.slice(mensagem.indexOf(':') + 1)]
+    : ['', '']
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">➕ Novo Produto</h2>
+    <div className="max-w-5xl">
+      <button
+        type="button"
+        onClick={onVoltar}
+        disabled={carregando}
+        className="flex items-center gap-1 -ml-1 mb-2 text-azul font-semibold hover:underline"
+      >
+        <IconeVoltar className="w-4 h-4" />
+        Produtos
+      </button>
+      <h1 className="largura-expandida text-3xl font-extrabold text-tinta mb-6">Novo produto</h1>
 
-        {mensagem && (
-          <div className={`mb-6 px-4 py-3 rounded-lg ${
-            mensagem.startsWith('✅')
-              ? 'bg-green-100 text-green-700 border border-green-400'
-              : 'bg-red-100 text-red-700 border border-red-400'
-          }`}>
-            {mensagem}
-          </div>
-        )}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-8 items-start">
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-linha p-5 sm:p-7 space-y-5">
+          {mensagem && (
+            <div
+              role={tipoMensagem === 'erro' ? 'alert' : 'status'}
+              className={`border-l-4 px-4 py-3 font-semibold ${
+                tipoMensagem === 'ok' ? 'border-ok bg-green-50 text-ok' : 'border-perigo bg-red-50 text-perigo'
+              }`}
+            >
+              {textoMensagem}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Nome do Produto <span className="text-red-600">*</span>
-            </label>
+          <label className="block">
+            <span className="font-semibold">Nome do produto</span>
             <input
               type="text"
               name="nome"
               value={formData.nome}
               onChange={handleChange}
-              placeholder="Ex: Cimento CP-32 (saco 50kg)"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
+              placeholder="Ex.: Cimento CP-32 (saco 50 kg)"
+              className="campo mt-1.5"
               disabled={carregando}
             />
-          </div>
+          </label>
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Preço de Venda <span className="text-red-600">*</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <label className="block">
+              <span className="font-semibold">Preço de venda</span>
+              <span className="relative block mt-1.5">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-semibold text-concreto pointer-events-none">R$</span>
+                <input
+                  type="number"
+                  name="preco_venda"
+                  value={formData.preco_venda}
+                  onChange={handleChange}
+                  placeholder="0,00"
+                  step="0.01"
+                  min="0"
+                  inputMode="decimal"
+                  className="campo !pl-11 tabular-nums"
+                  disabled={carregando}
+                />
+              </span>
             </label>
-            <div className="flex items-center">
-              <span className="text-gray-700 font-semibold mr-2">R$</span>
-              <input
-                type="number"
-                name="preco_venda"
-                value={formData.preco_venda}
-                onChange={handleChange}
-                placeholder="0.00"
-                step="0.01"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
-                disabled={carregando}
-              />
-            </div>
-          </div>
 
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Desconto (%) <span className="text-gray-500 text-sm">(opcional)</span>
+            <label className="block">
+              <span className="font-semibold">Desconto <span className="font-normal text-concreto">(opcional)</span></span>
+              <span className="relative block mt-1.5">
+                <input
+                  type="number"
+                  name="desconto"
+                  value={formData.desconto}
+                  onChange={handleChange}
+                  placeholder="0"
+                  step="0.1"
+                  min="0"
+                  max="100"
+                  inputMode="decimal"
+                  className="campo !pr-10 tabular-nums"
+                  disabled={carregando}
+                />
+                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 font-semibold text-concreto pointer-events-none">%</span>
+              </span>
             </label>
-            <div className="flex items-center">
-              <input
-                type="number"
-                name="desconto"
-                value={formData.desconto}
-                onChange={handleChange}
-                placeholder="0"
-                step="0.1"
-                min="0"
-                max="100"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja"
-                disabled={carregando}
-              />
-              <span className="text-gray-700 font-semibold ml-2">%</span>
-            </div>
           </div>
 
-          {/* Preview */}
-          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-            <h3 className="font-bold text-gray-800 mb-4">📊 Preview</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
-              <div>
-                <p className="text-gray-600 text-sm mb-1">Preço Venda</p>
-                <p className="text-2xl font-bold text-deposito-azul">
-                  R$ {formData.preco_venda ? parseFloat(formData.preco_venda).toFixed(2) : '0.00'}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-600 text-sm mb-1">Preço Final</p>
-                <p className="text-2xl font-bold text-green-600">
-                  R$ {calcularPrecoComDesconto().toFixed(2)}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              disabled={carregando}
-              className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition"
-            >
-              {carregando ? 'Salvando...' : '✅ Cadastrar Produto'}
-            </button>
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
             <button
               type="button"
               onClick={onVoltar}
               disabled={carregando}
-              className="flex-1 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition"
+              className="sm:flex-none border-2 border-linha hover:border-concreto font-semibold py-3 px-5 rounded-md disabled:opacity-50"
             >
-              ← Voltar
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={carregando}
+              className="flex-1 bg-azul hover:bg-azul-escuro disabled:opacity-60 text-white font-bold py-3 px-5 rounded-md"
+            >
+              {carregando ? 'Cadastrando…' : 'Cadastrar produto'}
             </button>
           </div>
         </form>
+
+        {/* Prévia: a mesma etiqueta que aparece na consulta */}
+        <section aria-label="Como vai aparecer na consulta">
+          <p className="text-sm font-semibold text-concreto mb-3">Como vai aparecer na consulta</p>
+          <p className="largura-expandida text-2xl font-extrabold leading-tight mb-4 break-words">
+            {formData.nome || <span className="text-concreto/60">Nome do produto</span>}
+          </p>
+          <Etiqueta preco={parseFloat(formData.preco_venda) || 0} desconto={formData.desconto} compacta />
+        </section>
       </div>
     </div>
   )
