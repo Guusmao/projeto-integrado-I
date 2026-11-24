@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react'
 import API_URL from '../config'
+import { IconeBusca, IconeMais, IconeLixeira, IconeImpressora } from '../components/Icones'
+import { formatarMoeda, calcularPrecoComDesconto, formatarPercentual } from '../util'
 
 const CHAVE_RASCUNHO = 'orcamento-rascunho'
-
-const formatarMoeda = (valor) =>
-  valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-
-const calcularPrecoComDesconto = (preco, desconto) => {
-  return preco - (preco * ((desconto || 0) / 100))
-}
 
 const carregarRascunho = () => {
   try {
@@ -102,167 +97,183 @@ export default function Orcamento() {
   const economia = totalSemDesconto - total
   const dataHoje = new Date().toLocaleDateString('pt-BR')
 
+  const colunas = 'grid grid-cols-[minmax(0,1fr)_auto_auto] sm:grid-cols-[minmax(0,1fr)_5.5rem_7.5rem_8rem_2.75rem] gap-x-3'
+
   return (
     <>
       {/* ===== Tela (não sai na impressão) ===== */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 print:hidden">
-        {/* Coluna de Busca */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">🔍 Adicionar Produtos</h2>
+      <div className="print:hidden">
+        <h1 className="largura-expandida text-3xl font-extrabold text-tinta mb-5">Orçamento</h1>
 
-            <input
-              type="text"
-              placeholder="Digite o nome do produto..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-deposito-laranja rounded-lg focus:outline-none focus:ring-2 focus:ring-deposito-laranja text-lg"
-              autoFocus
-            />
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] gap-6 lg:gap-8 items-start">
+          {/* Coluna de busca */}
+          <section className="lg:sticky lg:top-8" aria-label="Adicionar produtos">
+            <div className="relative">
+              <IconeBusca className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-concreto pointer-events-none" />
+              <input
+                type="search"
+                aria-label="Buscar produto para adicionar"
+                placeholder="Adicionar produto…"
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="campo campo-grande"
+                autoFocus
+              />
+            </div>
 
-            <p className="mt-4 text-gray-600 text-sm">
-              {carregando ? 'Carregando produtos...' : 'Clique num produto para incluir no orçamento'}
+            <p className="mt-3 mb-2 text-sm text-concreto">
+              {carregando ? 'Carregando produtos…' : 'Toque num produto para incluir. Tocar de novo soma mais um.'}
             </p>
 
-            <div className="mt-4 space-y-2 max-h-96 overflow-y-auto">
-              {produtosFiltrados.map(produto => (
-                <button
-                  key={produto.id}
-                  onClick={() => adicionarItem(produto)}
-                  className="w-full text-left px-4 py-3 rounded-lg transition bg-gray-100 hover:bg-gray-200 text-gray-800 flex justify-between items-center gap-2"
-                >
-                  <span className="min-w-0">
-                    <span className="block truncate font-medium">{produto.nome}</span>
-                    <span className="block text-sm opacity-75">
-                      {formatarMoeda(calcularPrecoComDesconto(produto.preco_venda, produto.desconto))}
-                    </span>
-                  </span>
-                  <span className="text-deposito-azul font-bold text-xl">＋</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+            <ul className="bg-white rounded-lg border border-linha divide-y divide-linha overflow-y-auto max-h-72 lg:max-h-[60vh]">
+              {produtosFiltrados.map(produto => {
+                const qtdNoOrcamento = itens.find(item => item.id === produto.id)?.quantidade
+                return (
+                  <li key={produto.id}>
+                    <button
+                      onClick={() => adicionarItem(produto)}
+                      className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-cal group"
+                    >
+                      <span className="flex-1 min-w-0">
+                        <span className="block truncate font-semibold">{produto.nome}</span>
+                        <span className="block text-sm text-concreto tabular-nums">
+                          {formatarMoeda(calcularPrecoComDesconto(produto.preco_venda, produto.desconto))}
+                          {qtdNoOrcamento ? (
+                            <span className="ml-2 text-xs font-bold bg-amarelo text-azul rounded px-1.5 py-0.5 whitespace-nowrap">
+                              {Number(qtdNoOrcamento).toLocaleString('pt-BR')} no orçamento
+                            </span>
+                          ) : null}
+                        </span>
+                      </span>
+                      <span className="flex items-center justify-center w-9 h-9 rounded-full border-2 border-azul text-azul group-hover:bg-azul group-hover:text-white transition-colors" aria-hidden="true">
+                        <IconeMais className="w-5 h-5" />
+                      </span>
+                    </button>
+                  </li>
+                )
+              })}
+              {!carregando && produtosFiltrados.length === 0 && (
+                <li className="px-4 py-5 text-concreto">Nenhum produto com esse nome.</li>
+              )}
+            </ul>
+          </section>
 
-        {/* Coluna do Orçamento */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">🧾 Orçamento</h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          {/* A folha do orçamento */}
+          <section className="bg-white rounded-lg border border-linha" aria-label="Itens do orçamento">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 sm:p-6 border-b border-linha">
               <label className="block">
-                <span className="text-gray-700 text-sm font-semibold">Cliente (opcional)</span>
+                <span className="text-sm font-semibold text-concreto">Cliente (opcional)</span>
                 <input
                   type="text"
                   value={cliente}
                   onChange={(e) => setCliente(e.target.value)}
                   placeholder="Nome do cliente"
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  className="campo mt-1"
                 />
               </label>
               <label className="block">
-                <span className="text-gray-700 text-sm font-semibold">Observações (opcional)</span>
+                <span className="text-sm font-semibold text-concreto">Observações (opcional)</span>
                 <input
                   type="text"
                   value={observacoes}
                   onChange={(e) => setObservacoes(e.target.value)}
                   placeholder="Ex.: entrega no sábado"
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  className="campo mt-1"
                 />
               </label>
             </div>
 
             {itens.length === 0 ? (
-              <p className="text-center py-8 text-gray-500">
-                👈 Nenhum produto ainda. Busque e clique nos produtos para montar o orçamento.
-              </p>
+              <div className="px-6 py-14 text-center">
+                <p className="largura-expandida text-xl font-bold text-tinta">Orçamento vazio</p>
+                <p className="mt-1 text-concreto">Busque os produtos ao lado e toque neles para montar o orçamento.</p>
+              </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-gray-200 border-b-2 border-gray-400">
-                      <th className="text-left px-3 py-2 font-semibold text-gray-700">Produto</th>
-                      <th className="text-center px-3 py-2 font-semibold text-gray-700">Qtd</th>
-                      <th className="text-right px-3 py-2 font-semibold text-gray-700">Unitário</th>
-                      <th className="text-right px-3 py-2 font-semibold text-gray-700">Subtotal</th>
-                      <th className="px-3 py-2"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {itens.map(item => (
-                      <tr key={item.id} className="border-b border-gray-300">
-                        <td className="px-3 py-2 font-medium text-gray-800">
-                          {item.nome}
+              <div className="px-5 sm:px-6">
+                <div className={`${colunas} hidden sm:grid py-3 text-sm font-semibold text-concreto border-b border-linha`}>
+                  <span>Produto</span>
+                  <span className="text-center">Qtd</span>
+                  <span className="text-right">Unitário</span>
+                  <span className="text-right">Subtotal</span>
+                  <span />
+                </div>
+                <ul className="divide-y divide-linha">
+                  {itens.map(item => {
+                    const unitario = calcularPrecoComDesconto(item.preco_venda, item.desconto)
+                    return (
+                      <li key={item.id} className={`${colunas} gap-y-2 items-center py-3`}>
+                        <div className="col-span-3 sm:col-span-1 min-w-0">
+                          <p className="font-semibold">{item.nome}</p>
                           {item.desconto > 0 && (
-                            <span className="block text-xs text-orange-600">{item.desconto}% de desconto</span>
+                            <p className="text-xs text-concreto">{formatarPercentual(item.desconto)} de desconto</p>
                           )}
-                        </td>
-                        <td className="px-3 py-2 text-center">
+                        </div>
+                        <div className="flex items-center gap-2 sm:justify-center">
                           <input
                             type="number"
                             min="0"
                             step="any"
+                            inputMode="decimal"
+                            aria-label={`Quantidade de ${item.nome}`}
                             value={item.quantidade}
                             onChange={(e) => alterarQuantidade(item.id, e.target.value)}
-                            className="w-20 px-2 py-1 border border-gray-300 rounded text-center"
+                            className="campo !w-20 !py-1.5 !px-2 text-center tabular-nums font-semibold"
                           />
-                        </td>
-                        <td className="px-3 py-2 text-right text-gray-700 whitespace-nowrap">
-                          {formatarMoeda(calcularPrecoComDesconto(item.preco_venda, item.desconto))}
-                        </td>
-                        <td className="px-3 py-2 text-right font-semibold whitespace-nowrap">
-                          {formatarMoeda(subtotalDe(item))}
-                        </td>
-                        <td className="px-3 py-2 text-center">
-                          <button
-                            onClick={() => removerItem(item.id)}
-                            className="text-red-600 hover:text-red-800"
-                            title="Remover"
-                          >
-                            🗑️
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          <span className="sm:hidden text-sm text-concreto whitespace-nowrap tabular-nums">× {formatarMoeda(unitario)}</span>
+                        </div>
+                        <span className="hidden sm:block text-right tabular-nums whitespace-nowrap">{formatarMoeda(unitario)}</span>
+                        <span className="text-right font-bold tabular-nums whitespace-nowrap">{formatarMoeda(subtotalDe(item))}</span>
+                        <button
+                          onClick={() => removerItem(item.id)}
+                          className="justify-self-end flex items-center justify-center w-10 h-10 rounded-md text-concreto hover:text-perigo hover:bg-red-50"
+                          title="Remover do orçamento"
+                          aria-label={`Remover ${item.nome}`}
+                        >
+                          <IconeLixeira className="w-5 h-5" />
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
               </div>
             )}
 
-            <div className="mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 px-5 sm:px-6 py-5 bg-azul text-white rounded-b-lg no-azul">
               <div>
-                {economia > 0.005 && (
-                  <p className="text-sm text-orange-700">Economia com descontos: {formatarMoeda(economia)}</p>
-                )}
-                <p className="text-2xl sm:text-3xl font-bold text-deposito-azul">
-                  Total: {formatarMoeda(total)}
+                <p className="font-semibold text-white/80">Total</p>
+                <p className="largura-condensada text-5xl font-extrabold leading-none tabular-nums text-amarelo">
+                  {formatarMoeda(total)}
                 </p>
+                {economia > 0.005 && (
+                  <p className="mt-2 text-sm text-white/80">Economia com descontos: {formatarMoeda(economia)}</p>
+                )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   onClick={limparOrcamento}
                   disabled={itens.length === 0}
-                  className="bg-gray-400 hover:bg-gray-500 disabled:opacity-50 text-white font-bold py-2 px-4 rounded-lg"
+                  className="flex-1 sm:flex-none font-semibold py-3 px-5 rounded-md border-2 border-white/40 hover:border-white disabled:opacity-40 disabled:pointer-events-none"
                 >
                   Limpar
                 </button>
                 <button
                   onClick={() => window.print()}
                   disabled={itens.length === 0}
-                  className="bg-deposito-azul hover:bg-deposito-laranja-escuro disabled:opacity-50 text-white font-bold py-2 px-4 rounded-lg"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 font-bold py-3 px-5 rounded-md bg-amarelo text-azul hover:bg-white disabled:opacity-40 disabled:pointer-events-none"
                 >
-                  🖨️ Imprimir
+                  <IconeImpressora className="w-5 h-5" />
+                  Imprimir
                 </button>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
 
       {/* ===== Folha impressa (só aparece na impressão) ===== */}
       <div className="hidden print:block text-black text-sm">
-        <div className="flex items-center justify-between border-b-4 border-deposito-azul pb-3 mb-4">
-          <img src="/logo-512x512.png" alt="Depósito Piauí" className="h-20" />
+        <div className="flex items-center justify-between border-b-4 border-azul pb-3 mb-4">
+          <span className="logo-recorte" style={{ '--h': '64px' }}><img src="/logo-512x512.png" alt="Depósito Piauí" /></span>
           <div className="text-right">
             <p className="text-2xl font-bold">ORÇAMENTO</p>
             <p>Data: {dataHoje}</p>
